@@ -65,9 +65,7 @@ app.post('/answers', (req, res) =>{
     let finalResult = {attempt:answerOptions.attempt+1,
                         answer:checkedLetters,
                         isItThere:checkedPositions,
-                       //duplicates:duplicateLetters,
                     };
-    //console log the results just for debugging. can delete afterwards.
     res.json(finalResult);
 });
 

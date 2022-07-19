@@ -125,14 +125,19 @@ function updateBoxes(json){
     for (let i = 0; i < json.answer.length; i++) {
         if(json.answer[i] == true){
             document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "correct";
+            document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBcorrect";
             correctLetters++;
             x.push(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML);
         }
         else if (json.isItThere[i] == "exists"){
             document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "exists";
+            document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBexists";
+            console.log(json.answer[i]);
         }
         else {
             document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "missing";
+            document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBmissing";
+            console.log(json.answer[i]);
         }
     }
     if(correctLetters === 5){

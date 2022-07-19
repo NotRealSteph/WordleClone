@@ -54,11 +54,10 @@ header {
 }
 
 [data-state="default"] {
-    background-color: transparent;
 }
 
 [data-state="missing"] {
-    background-color: rgba(128, 128, 128, 0.428);;
+    background-color: rgba(75, 75, 75, 0.7);
     color: white;
 }
 
@@ -68,6 +67,21 @@ header {
 }
 
 [data-state="correct"] {
+    background-color: rgb(58, 140, 58);
+    color: white;
+}
+
+[data-state="KBmissing"] {
+    background-color: rgba(75, 75, 75, 0.7);
+    color: white;
+}
+
+[data-state="KBexists"] {
+    background-color: rgb(219, 200, 54);
+    color: white;
+}
+
+[data-state="KBcorrect"] {
     background-color: rgb(56, 106, 56);
     color: white;
 }
@@ -81,17 +95,17 @@ header {
     position: absolute;
 }
 
-.keyboard button {
+button {
     min-width: 40px;
     max-width: 50px;
     height: 55px;
     margin: 0.5px;
-    background-color: rgb(200, 200, 200);
+    background-color: rgb(211, 211, 211);
     font-family: sans-serif;
     font-weight: bold;
 }
 
-.keyboard .enter, .keyboard .delete {
+.enter, .delete {
     max-width: 100px;
     width: 70px;
     min-width: 55px;
