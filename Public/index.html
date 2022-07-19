@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheet.css" />
+    <script src="/script.js" async></script>
+    <title>Wordle clone</title>
+</head>
+<body>
+    <header>
+        <h1>WORDLE CLONE!!</h1>
+    </header>
+    <main>
+        <div id="flex-container">
+            <div class="row1">
+                <div id="row1pos1" class="textBox" tabindex="0" data-state="default" data-filled="false">
+                </div>
+                <div id="row1pos2" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row1pos3" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row1pos4" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row1pos5" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+            </div>
+            <div class="row2">
+                <div id="row2pos1" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row2pos2" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row2pos3" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row2pos4" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row2pos5" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+            </div>
+            <div class="row3">
+                <div id="row3pos1" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row3pos2" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row3pos3" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row3pos4" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row3pos5" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+            </div>
+            <div class="row4">
+                <div id="row4pos1" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row4pos2" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row4pos3" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row4pos4" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row4pos5" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+            </div>
+            <div class="row5">
+                <div id="row5pos1" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row5pos2" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row5pos3" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row5pos4" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row5pos5" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+            </div>
+            <div class="row6">
+                <div id="row6pos1" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row6pos2" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row6pos3" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row6pos4" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+                <div id="row6pos5" class="textBox" tabindex="-1" data-state="default" data-filled="false">
+                </div>
+            </div>
+        </div>
+        <div id="keyboard" class="keyboard">
+            <button id="q" name="q" class="charKey" value="q" data-state="default">Q</button>
+            <button id="w" name="w" class="charKey" value="w" data-state="default">W</button>
+            <button id="e" name="e" class="charKey" value="e" data-state="default">E</button>
+            <button id="r" name="r" class="charKey" value="r" data-state="default">R</button>
+            <button id="t" name="t" class="charKey" value="t" data-state="default">T</button>
+            <button id="y" name="y" class="charKey" value="y" data-state="default">Y</button>
+            <button id="u" name="u" class="charKey" value="u" data-state="default">U</button>
+            <button id="i" name="i" class="charKey" value="i" data-state="default">I</button>
+            <button id="o" name="o" class="charKey" value="o" data-state="default">O</button>
+            <button id="p" name="p" class="charKey" value="p" data-state="default">P</button><br>
+            <button id="a" name="a" class="charKey" value="a" data-state="default">A</button>
+            <button id="s" name="s" class="charKey" value="s" data-state="default">S</button>
+            <button id="d" name="d" class="charKey" value="d" data-state="default">D</button>
+            <button id="f" name="f" class="charKey" value="f" data-state="default">F</button>
+            <button id="g" name="g" class="charKey" value="g" data-state="default">G</button>
+            <button id="h" name="h" class="charKey" value="h" data-state="default">H</button>
+            <button id="j" name="j" class="charKey" value="j" data-state="default">J</button>
+            <button id="k" name="k" class="charKey" value="k" data-state="default">K</button>
+            <button id="l" name="l" class="charKey" value="l" data-state="default">L</button><br>
+            <button id="enter" name="enter" class="enter" type="submit">Enter</button>
+            <button id="z" name="z" class="charKey" value="z" data-state="default">Z</button>
+            <button id="x" name="x" class="charKey" value="x" data-state="default">X</button>
+            <button id="c" name="c" class="charKey" value="c" data-state="default">C</button>
+            <button id="v" name="v" class="charKey" value="v" data-state="default">V</button>
+            <button id="b" name="b" class="charKey" value="b" data-state="default">B</button>
+            <button id="n" name="n" class="charKey" value="n" data-state="default">N</button>
+            <button id="m" name="m" class="charKey" value="m" data-state="default">M</button>
+            <button id="delete" name="delete" class="delete">Delete</button>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,98 @@
+
+body {
+    text-align: center;
+    border: 0px;
+    margin: 0px;
+    min-width: 400px;
+}
+
+header {
+    margin: 50px auto;
+}
+
+#flex-container {
+    pointer-events: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:space-evenly;
+    margin: auto;
+    width: 356px;
+    height: 430px;
+    min-width: 0;
+}
+
+.row1, .row2, .row3, .row4, .row5, .row6 {
+    flex-shrink: 1;
+    flex-basis:auto;
+    overflow: hidden;
+}
+
+.textBox {
+    flex-basis: 20%;
+    display: inline-block;
+    flex-shrink: 1;
+    border: 1px solid rgb(162, 159, 159);
+    user-select: none;
+    width: 60px;
+    height: 60px;
+    margin: 2px;
+    font-size: 40px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    caret-color: rgba(0, 0, 0, 0%);
+    overflow: hidden;
+    padding-top:10px;
+}
+
+[data-filled="false"] {
+    border: 1px solid rgb(162, 159, 159);
+}
+
+[data-filled="true"] {
+    border: 2px Solid black;
+}
+
+[data-state="default"] {
+    background-color: transparent;
+}
+
+[data-state="missing"] {
+    background-color: rgba(128, 128, 128, 0.428);;
+    color: white;
+}
+
+[data-state="exists"] {
+    background-color: rgb(219, 200, 54);
+    color: white;
+}
+
+[data-state="correct"] {
+    background-color: rgb(56, 106, 56);
+    color: white;
+}
+
+#keyboard {
+    height: 180px;
+    width: 500px;
+    bottom: 0em;
+    left: 50%;
+    transform: translate(-50%, 0);
+    position: absolute;
+}
+
+.keyboard button {
+    min-width: 40px;
+    max-width: 50px;
+    height: 55px;
+    margin: 0.5px;
+    background-color: rgb(200, 200, 200);
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.keyboard .enter, .keyboard .delete {
+    max-width: 100px;
+    width: 70px;
+    min-width: 55px;
+}
