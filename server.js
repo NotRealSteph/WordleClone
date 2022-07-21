@@ -18,6 +18,7 @@ app.use(express.static('Public'));
 app.use(bodyParser.json());
 
 //reading the word list and generating the array of words
+//on heroku this doesnt work - will need to set up a database
 fs.readFile('words.txt', 'utf8', function(error, word){
     if(error) throw error;
     //identifying spaces and new line characters within a regular expression
@@ -138,6 +139,8 @@ function compareAnswers(answerOptions){
     console.log(toMap);
 }
 
+
+//HEROKU PORT STUFF
 //let port = process.env.PORT;
 //if (port == null || port == "") {
 //  port = 8000;
