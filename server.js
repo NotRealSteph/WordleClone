@@ -34,6 +34,9 @@ fs.readFile('words.txt', 'utf8', function(error, word){
 app.get('/answers', (req, res) =>{
     if(answer.length == 0){
         let x = words[Math.floor(Math.random()*words.length)];
+        if(x == undefined){
+            x = "penis";
+        }
         storeAnswer(x);
         res.json(x);
     }
