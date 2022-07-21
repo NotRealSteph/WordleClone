@@ -20,7 +20,7 @@ function getWord(){
     fetch('/answers')
         .then(response => response.json())
         .then(json => {
-            console.log("word set");
+            console.log(json);
         })
 }
 
