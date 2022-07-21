@@ -138,6 +138,8 @@ function compareAnswers(answerOptions){
     console.log(toMap);
 }
 
-app.listen(3000,()=>{
-    console.log('http://localhost:3000');
-});
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+app.listen(port);
