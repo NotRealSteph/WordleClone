@@ -1,6 +1,8 @@
 //attempt variable corresponds to the row the user can input values into
 let currentTry = 1;
 let gameOver = false;
+let gameWon = false;
+let gameLost = false;
 
 const starterBox = document.getElementById(`row${currentTry}pos1`);
 //double check to see if this is necessary to assign this.
@@ -27,8 +29,12 @@ function getWord(){
 document.addEventListener('mousedown', inputBoxOnly, true);
 
 function inputBoxOnly(e) {
-    if(gameOver){
+    if(gameWon){
         alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
+        return;
+    }
+    if(gameLost){
+        alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
         return;
     }
     e.preventDefault();
@@ -44,8 +50,12 @@ function inputBoxOnly(e) {
 
 //PHYSICAL KEYBOARD EVENT LISTENER
 document.addEventListener('keydown', function updateValue(event) {
-    if(gameOver){
+    if(gameWon){
         alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
+        return;
+    }
+    if(gameLost){
+        alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
         return;
     }
     var regex = /^[a-z]/;
@@ -121,73 +131,85 @@ function checkAnswer(){
 //sets relevent data attributes in the HTML
 function updateBoxes(json){
     let correctLetters = 0;
+    //an array to capture the correct letters to give the answer
     let x = [];
+    //checks if letter positions are correct
     for (let i = 0; i < json.answer.length; i++) {
         if(json.answer[i] == true){
+            //if correct - make boxes and keyboard letter green and increment correctLetters counter for won game status
             document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "correct";
             document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBcorrect";
             correctLetters++;
             x.push(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML);
         }
+        //sets boxes and keyboard letters to be yellow
         else if (json.isItThere[i] == "exists"){
             document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "exists";
             document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBexists";
-            console.log(json.answer[i]);
         }
+        //sets boxes and keyboard letters to be black
         else {
             document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "missing";
             document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBmissing";
-            console.log(json.answer[i]);
         }
     }
+    //checks for winning game conditions and calls winGame function if all 5 letters are correct
     if(correctLetters === 5){
         let correctAnswer = x.join("");
-        console.log(correctAnswer);
         winGame(correctAnswer);
     }
+    if(correctLetters !== 5 && currentTry === 6){
+        loseGame();
+    }
+    //this may or may not be necessary, added it in multiple spots to resolve a bug in that the correct box wasnt being focused whenever a value was updated
     document.getElementById(`row${currentTry+1}pos1`).focus();
-}
-
-function winGame(correctAnswer){
-    gameOver = true;
-    alert(`congratulations!!!! you win!!!!!!! You managed to guess ${correctAnswer} in ${currentTry} guesses.`);
 }
 
 //this is the function that handles the delegated event listener for mouse clicks on the on screen keyboard
 function addValue(event){
-    if(gameOver){
+    if(gameWon){
         alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
         return;
     }
+    if(gameLost){
+        alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
+        return;
+    }
+    //when a keyboard letter is pressed, the letter is inserted into the currentBox focus and it moves focus to the input box
     var ele = event.target;
     currentBox = document.activeElement;
     if(ele.classList.contains("charKey")){
         currentBox.innerHTML = ele.getAttribute('value');
         currentBox.focus()
+        //sets it as a filled box styling in css
         currentBox.dataset.filled = "true";
         autotab();
     }
+    //when enter is pressed, it checks if all 5 letters are filled before checking if the answer is right
     if(ele.classList.contains("enter")){
         if(currentBox === document.getElementById(`row${currentTry}pos5`) && currentBox.dataset.filled == "true"){
         checkAnswer();
+        //json is recieved from the server and updates the currentTry function/number of attempts to +1 and then makes the next line the focus
         document.getElementById(`row${currentTry}pos1`).focus();
         }
     }
     if(ele.classList.contains("delete")){
         deleteTab();
     }
+    //otherwise, do nothing
     event.preventDefault();
 }
 
 //logic for deleting input values and returning to the previous input field.
-//if the try catch block isnt there it seems to fail
 function deleteTab(){
     currentBox = document.activeElement;
     currentBox.innerHTML ="";
     currentBox.dataset.filled = 'false';
+    //if its the first box, do not change input box target
     if(currentBox === document.getElementById(`row${currentTry}pos1`)){
         return;
     }
+    //tabbing backwards when deleting values - if the try catch block isnt there it fails for some reason
     for (let i = 1; i < 6; i++) {
         if(currentBox === document.getElementById(`row${currentTry}pos${i}`)){
             try{
@@ -203,12 +225,13 @@ function deleteTab(){
 }
 
 //logic for moving to next input field.
-//if the try catch block isnt there it seems to fail
 function autotab(){
     currentBox = document.activeElement;
+    //do nothing if you are on the last input box of a row
     if(currentBox === document.getElementById(`row${currentTry}pos5`)){
         return;
     }
+    //if the try catch block isnt there it seems to fail just like delete tab
     for (let i = 1; i < 5; i++) {
         if(currentBox === document.getElementById(`row${currentTry}pos${i}`) && currentBox !== document.getElementById(`row${currentTry}pos5`)){
             try{
@@ -223,3 +246,14 @@ function autotab(){
     } 
 }
 
+function winGame(correctAnswer){
+    gameOver = true;
+    gameWon = true;
+    alert(`congratulations!!!! you win!!!!!!! You managed to guess ${correctAnswer} in ${currentTry} guesses.`);
+}
+
+function loseGame(){
+    gameOver = true;
+    gameLost = true;
+    alert(`sorry, but you didn't manage to guess the answer in 6 guesses. Better luck next time.`)
+}
