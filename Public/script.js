@@ -30,11 +30,13 @@ document.addEventListener('mousedown', inputBoxOnly, true);
 
 function inputBoxOnly(e) {
     if(gameWon){
-        alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
+        openResults();
+        //alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
         return;
     }
     if(gameLost){
-        alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
+        openResults();
+        //alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
         return;
     }
     e.preventDefault();
@@ -51,11 +53,13 @@ function inputBoxOnly(e) {
 //PHYSICAL KEYBOARD EVENT LISTENER
 document.addEventListener('keydown', function updateValue(event) {
     if(gameWon){
-        alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
+        openResults();
+        //alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
         return;
     }
     if(gameLost){
-        alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
+        openResults();
+        //alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
         return;
     }
     var regex = /^[a-z]/;
@@ -168,11 +172,13 @@ function updateBoxes(json){
 //this is the function that handles the delegated event listener for mouse clicks on the on screen keyboard
 function addValue(event){
     if(gameWon){
-        alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
+        openResults();
+        //alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
         return;
     }
     if(gameLost){
-        alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
+        openResults();
+        //alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
         return;
     }
     //when a keyboard letter is pressed, the letter is inserted into the currentBox focus and it moves focus to the input box
@@ -246,14 +252,39 @@ function autotab(){
     } 
 }
 
+//refactor to maybe have a single function that controls end of game with nested if statement to handle the messages and booleans
+//then also add in a change to innerHTML for the message displayed - perhaps in its own function that has a template for the results
 function winGame(correctAnswer){
     gameOver = true;
     gameWon = true;
-    alert(`congratulations!!!! you win!!!!!!! You managed to guess ${correctAnswer} in ${currentTry} guesses.`);
+    //alert(`congratulations!!!! you win!!!!!!! You managed to guess ${correctAnswer} in ${currentTry} guesses.`);
+    openResults(correctAnswer);
 }
 
 function loseGame(){
     gameOver = true;
     gameLost = true;
-    alert(`sorry, but you didn't manage to guess the answer in 6 guesses. Better luck next time.`)
+    //alert(`sorry, but you didn't manage to guess the answer in 6 guesses. Better luck next time.`)
+    openResults();
 }
+
+// Get the modal
+var modal = document.getElementById("myModal");
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+//end of game calls openResults modal instead of a button
+function openResults() {
+    modal.style.display = "block";
+}
+// When the user clicks on <span> (x), close the modal
+//i removed the x but the span still exists. try removing this and see how the thing goes or if it breaks.
+span.onclick = function() {
+  modal.style.display = "none";
+}
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+} 
