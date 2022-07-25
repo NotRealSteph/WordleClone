@@ -29,14 +29,8 @@ function getWord(){
 document.addEventListener('mousedown', inputBoxOnly, true);
 
 function inputBoxOnly(e) {
-    if(gameWon){
+    if(gameWon||gameLost){
         openResults();
-        //alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
-        return;
-    }
-    if(gameLost){
-        openResults();
-        //alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
         return;
     }
     e.preventDefault();
@@ -52,14 +46,8 @@ function inputBoxOnly(e) {
 
 //PHYSICAL KEYBOARD EVENT LISTENER
 document.addEventListener('keydown', function updateValue(event) {
-    if(gameWon){
+    if(gameWon||gameLost){
         openResults();
-        //alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
-        return;
-    }
-    if(gameLost){
-        openResults();
-        //alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
         return;
     }
     var regex = /^[a-z]/;
@@ -171,14 +159,8 @@ function updateBoxes(json){
 
 //this is the function that handles the delegated event listener for mouse clicks on the on screen keyboard
 function addValue(event){
-    if(gameWon){
+    if(gameWon||gameLost){
         openResults();
-        //alert("You've already won today. Please wait till your ego deflates a bit before trying again.");
-        return;
-    }
-    if(gameLost){
-        openResults();
-        //alert("Sorry thats you're attempt for today. Please read a dictionary or something before trying again.");
         return;
     }
     //when a keyboard letter is pressed, the letter is inserted into the currentBox focus and it moves focus to the input box
@@ -272,7 +254,6 @@ function loseGame(){
 var modal = document.getElementById("myModal");
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
-
 //end of game calls openResults modal instead of a button
 function openResults() {
     modal.style.display = "block";
