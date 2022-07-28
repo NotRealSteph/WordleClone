@@ -127,9 +127,20 @@ button {
   
   /* Modal Content/Box */
   .modal-content {
+    display: inline-grid;
+    grid-template-columns: auto auto auto auto auto;
+    justify-content: center;
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
+    padding: 100px 50px;
     border: 1px solid #888;
-    width: 50%; /* Could be more or less, depending on screen size */
+    width: 40%; /* Could be more or less, depending on screen size */
+    max-width: 400px;
   }
+
+  .summaryTextBox {
+    border: 1px solid rgb(162, 159, 159);
+    width: 40px;
+    height: 40px;
+    caret-color: rgba(0, 0, 0, 0%);
+}

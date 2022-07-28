@@ -239,14 +239,14 @@ function autotab(){
 function winGame(correctAnswer){
     gameOver = true;
     gameWon = true;
-    //alert(`congratulations!!!! you win!!!!!!! You managed to guess ${correctAnswer} in ${currentTry} guesses.`);
+    Summary();
     openResults(correctAnswer);
 }
 
 function loseGame(){
     gameOver = true;
     gameLost = true;
-    //alert(`sorry, but you didn't manage to guess the answer in 6 guesses. Better luck next time.`)
+    Summary();
     openResults();
 }
 
@@ -269,3 +269,10 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 } 
+
+function Summary(){
+    let boxes = document.querySelectorAll(".textBox");
+    boxes.forEach(box => {
+        document.getElementById("summary").innerHTML += '<div class="summaryTextBox" data-state=' + box.dataset.state + '></div>';
+    });
+}
