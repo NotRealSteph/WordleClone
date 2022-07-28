@@ -276,3 +276,5 @@ function Summary(){
         document.getElementById("summary").innerHTML += '<div class="summaryTextBox" data-state=' + box.dataset.state + '></div>';
     });
 }
+
+//need to add a section to validate that the word the user enters is actually a word before it calls the server

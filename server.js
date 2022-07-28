@@ -31,6 +31,41 @@ fs.readFile('words.txt', 'utf8', function(error, word){
     }
 });
 
+//this is for reading the list of valid words and then filtering out the duplicates.
+//this is commented out and only uncommented and run when new words are found and need to be added
+// const ValidWords = [];
+// fs.readFile('legitWords.txt', 'utf8', function(error, word){
+//     if(error) throw error;
+//     let delimiter = /\r\n/;
+//     let dataAsArray = [] = word.split(delimiter);
+//     //push the words into the array of words
+//     for (let k = 0; k < dataAsArray.length; k++) {
+//         ValidWords.push(dataAsArray[k]);
+//     }
+//     //filter out duplicate words
+//     var unique = ValidWords.filter(onlyUnique);
+  
+//     const writeStream = fs.createWriteStream('uniquewords.txt');
+//     const pathName = "uniquewords.txt";
+//     // write each value of the array on the file breaking line
+//     unique.forEach(value => writeStream.write(`${value}\n`));
+//     // the finish event is emitted when all data has been flushed from the stream
+//     writeStream.on('finish', () => {
+//     console.log(`wrote all the array data to file ${pathName}`);
+//     });
+//     // handle the errors on the write process
+//     writeStream.on('error', (err) => {
+//         console.error(`There is an error writing the file ${pathName} => ${err}`)
+//     });
+//     // close the stream
+//     writeStream.end();
+// });
+
+// function onlyUnique(value, index, self) {
+//     return self.indexOf(value) === index;
+//   }
+
+
 //selects a random word for the puzzle
 app.get('/answers', (req, res) =>{
     if(answer.length == 0){
