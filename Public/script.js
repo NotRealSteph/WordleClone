@@ -67,7 +67,8 @@ document.addEventListener('keydown', function updateValue(event) {
     //detects if enter is pressed and only submits if its the last input box of the row and a value has been submitted
     if(event.key === "Enter"){
         if(currentBox === document.getElementById(`row${currentTry}pos5`) && currentBox.dataset.filled == "true"){
-            //calls server to check answer
+        //validateAnswer();
+        //calls server to check answer
         checkAnswer();
         //double check to see if this is necessary seeing as we call it in checkAnswers but for some reason it wasnt working properly before
         document.getElementById(`row${currentTry}pos1`).focus();
@@ -90,6 +91,24 @@ function getAnswer(){
     return answer;
 }
 
+//This function is an API to a free web dictionary to search up valid words for this game.
+//the list i have on server side is not exhaustive and misses a lot of words
+//using this API i can have a dictionary check the word exists before it is processed however it doesnt have swear words
+//for now i will not call this function
+function validateAnswer(){
+    let userInput = getAnswer().join("");
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${userInput}`)
+        .then(response => response.json())
+        .then(json => {
+            console.log(json);
+            if(json.title === "No Definitions Found"){
+                alert(json.message);
+                return false;
+            }
+        })
+    return true;
+}
+
 //stores currentTry and the user input into JSON and calls server
 function checkAnswer(){
     let options = {
@@ -106,11 +125,14 @@ function checkAnswer(){
     fetch('/answers', options)
       .then(response => response.json())
       .then(data => {
-        //this is to debug to see the response. can delete
-        console.log('Success:', data);
+        if(data.answer === "invalid"){
+            alert("The word you entered isn't a valid word");
+            document.getElementById(`row${currentTry}pos5`).focus();
+            return;
+        }
         //updates relevant data attributes in the HTML for correct/wrong answers
         updateBoxes(data);
-        //updates the currentTry to a +1 value
+        //updates the currentTry
         currentTry = data.attempt;
         //should focus on the next new row
         document.getElementById(`row${currentTry}pos1`).focus();
@@ -176,9 +198,8 @@ function addValue(event){
     //when enter is pressed, it checks if all 5 letters are filled before checking if the answer is right
     if(ele.classList.contains("enter")){
         if(currentBox === document.getElementById(`row${currentTry}pos5`) && currentBox.dataset.filled == "true"){
+        //validateAnswer();
         checkAnswer();
-        //json is recieved from the server and updates the currentTry function/number of attempts to +1 and then makes the next line the focus
-        document.getElementById(`row${currentTry}pos1`).focus();
         }
     }
     if(ele.classList.contains("delete")){

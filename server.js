@@ -31,6 +31,19 @@ fs.readFile('words.txt', 'utf8', function(error, word){
     }
 });
 
+const ValidWords = [];
+fs.readFile('uniquewords.txt', 'utf8', function(error, word){
+    debugger;
+    if(error) throw error;
+    let delimiter = /\n/;
+    let dataAsArray = [] = word.split(delimiter);
+    //push the words into the array of words
+    for (let k = 0; k < dataAsArray.length; k++) {
+        ValidWords.push(dataAsArray[k]);
+    }
+    console.log(ValidWords);
+});
+
 //this is for reading the list of valid words and then filtering out the duplicates.
 //this is commented out and only uncommented and run when new words are found and need to be added
 // const ValidWords = [];
@@ -104,15 +117,39 @@ function findDuplicateLetters() {
 //calls compareAnswers to see if the user input was correct or not, then sends right/wrong answers with extra attempt.
 //note does not send the actual answer to the client - only correct or incorrect positions.
 app.post('/answers', (req, res) =>{
+    debugger;
     console.log(req.body);
     let answerOptions = req.body;
-    compareAnswers(answerOptions);
-    let finalResult = {attempt:answerOptions.attempt+1,
-                        answer:checkedLetters,
-                        isItThere:checkedPositions,
-                    };
-    res.json(finalResult);
+    //check if the user answer is an actual word, if so, proceed with the letter checking
+    if(validateAnswer(answerOptions)){
+        compareAnswers(answerOptions);
+        let finalResult = {attempt:answerOptions.attempt+1,
+                            answer:checkedLetters,
+                            isItThere:checkedPositions,
+                        };
+                        console.log(finalResult);
+        res.json(finalResult);
+    }
+    //otherwise reject the answer and do not check letters
+    else{
+        let invalidResult = {
+            attempt:answerOptions.attempt,
+            answer: "invalid"};
+            console.log(invalidResult);
+        res.json(invalidResult);
+        
+    }
 });
+
+function validateAnswer(answerOptions){
+    debugger;
+    let userInput = answerOptions.answer.join("");
+    console.log(userInput);
+    if(ValidWords.includes(userInput)){
+        return true;
+    }
+    return false;
+}
 
 //check for duplicate letters and put in a counter here for the "exists" option to keep track.
 function compareAnswers(answerOptions){
