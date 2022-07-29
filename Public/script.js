@@ -68,12 +68,9 @@ document.addEventListener('keydown', function updateValue(event) {
     if(event.key === "Enter"){
         if(currentBox === document.getElementById(`row${currentTry}pos5`) && currentBox.dataset.filled == "true"){
         //validateAnswer();
-        //calls server to check answer
         checkAnswer();
-        //double check to see if this is necessary seeing as we call it in checkAnswers but for some reason it wasnt working properly before
-        document.getElementById(`row${currentTry}pos1`).focus();
         }
-        return;
+    return;
     }
     event.preventDefault();
     
@@ -132,9 +129,7 @@ function checkAnswer(){
         }
         //updates relevant data attributes in the HTML for correct/wrong answers
         updateBoxes(data);
-        //updates the currentTry
         currentTry = data.attempt;
-        //should focus on the next new row
         document.getElementById(`row${currentTry}pos1`).focus();
       })
       .catch((error) => {
@@ -297,5 +292,3 @@ function Summary(){
         document.getElementById("summary").innerHTML += '<div class="summaryTextBox" data-state=' + box.dataset.state + '></div>';
     });
 }
-
-//need to add a section to validate that the word the user enters is actually a word before it calls the server

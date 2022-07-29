@@ -31,6 +31,7 @@ fs.readFile('words.txt', 'utf8', function(error, word){
     }
 });
 
+//storing the valid words into an array for user validation
 const ValidWords = [];
 fs.readFile('uniquewords.txt', 'utf8', function(error, word){
     debugger;
@@ -41,11 +42,10 @@ fs.readFile('uniquewords.txt', 'utf8', function(error, word){
     for (let k = 0; k < dataAsArray.length; k++) {
         ValidWords.push(dataAsArray[k]);
     }
-    console.log(ValidWords);
 });
 
-//this is for reading the list of valid words and then filtering out the duplicates.
-//this is commented out and only uncommented and run when new words are found and need to be added
+// //this is for reading the list of valid words and then filtering out the duplicates.
+// //this is commented out and only uncommented and run when new words are found and need to be added
 // const ValidWords = [];
 // fs.readFile('legitWords.txt', 'utf8', function(error, word){
 //     if(error) throw error;
@@ -136,8 +136,7 @@ app.post('/answers', (req, res) =>{
             attempt:answerOptions.attempt,
             answer: "invalid"};
             console.log(invalidResult);
-        res.json(invalidResult);
-        
+        res.json(invalidResult);   
     }
 });
 
