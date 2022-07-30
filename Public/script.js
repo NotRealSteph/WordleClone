@@ -1,32 +1,31 @@
-let gameOver = false;
 const starterBox = document.getElementById(`row1pos1`);
+//can probably refactor this to be function scoped but it would mean a lot of repitation. See if theres a better way
 let currentBox;
 
-//on window reload timer resets to 1 even in the middle of a previous game.
-//perhaps save the timer counter into local storage and add an if statement into the timer function to resume counter if it already exists in localstorage
-//need to save gameOver state into local storage too
+//need to save board state into local storage
+//wordle saves it as an object then stringify it and save to localstorage
+//then json.Parse back into an object and load it up in a gameLoader() function that is called on newSession() first two IF statements
 
 window.addEventListener("load", newSession);
 
 function newSession(){
-    let sessionDate = new Date().getDay();
-    console.log(sessionDate);
-    if(localStorage.PreviousSessionDate == sessionDate && gameOver){
-        console.log("the date is: " + localStorage.PreviousSessionDate);
+    let sessionDate = new Date().toDateString();
+    if(localStorage.PreviousSessionDate === sessionDate && localStorage.gameOver == true){
+        console.log("finished state");
         return false;
     }
-    if(localStorage.PreviousSessionDate == sessionDate && !gameOver){
-        console.log("the date is now: " + localStorage.PreviousSessionDate);
+    if(localStorage.PreviousSessionDate === sessionDate && localStorage.gameOver == false){
+        console.log("saved State");
         document.getElementById(localStorage.PreviousSessionBox).focus();
         return false;
     }
     else if(localStorage.PreviousSessionDate !== sessionDate){
+        console.log("new state");
+    localStorage.gameOver = false;
     localStorage.PreviousSessionDate = sessionDate;
     localStorage.currentTry = 1;
-    getWord();
     localStorage.PreviousSessionBox = starterBox.id;
-    //for debugging.
-    console.log(`the id: ${localStorage.PreviousSessionBox}`);
+    getWord();
     starterBox.focus();
     return true;
     }
@@ -46,14 +45,13 @@ function getWord(){
 document.addEventListener('mousedown', inputBoxOnly, true);
 
 function inputBoxOnly(e) {
-    if(gameOver){
+    if(localStorage.gameOver === "true"){
         openResults();
         return;
     }
     e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
-    //event delegation function to handle clicking on on-screen keyboard
     addValue(e);
     //currentbox is set every new user input so if user tries to click away from input fields, it should auto focus back on the last input field
     if(document.activeElement !== currentBox){
@@ -63,7 +61,7 @@ function inputBoxOnly(e) {
 
 //PHYSICAL KEYBOARD EVENT LISTENER
 document.addEventListener('keydown', function updateValue(event) {
-    if(gameOver){
+    if(localStorage.gameOver === "true"){
         openResults();
         return;
     }
@@ -146,13 +144,14 @@ function checkAnswer(){
         }
         //updates relevant data attributes in the HTML for correct/wrong answers
         updateBoxes(data);
-        console.log(data.attempt);
         localStorage.currentTry = data.attempt;
         //cant use autotab for now because it doesnt have an if statement to handle enter to new line
         //autotab();
+        if(data.attempt < 7){
         document.getElementById(`row${localStorage.currentTry}pos1`).focus();
         localStorage.PreviousSessionBox = `row${localStorage.currentTry}pos1`;
         timer.counter = 1;
+        }
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -184,18 +183,20 @@ function updateBoxes(json){
             document.getElementById(document.getElementById(`row${localStorage.currentTry}pos${i+1}`).innerHTML).dataset.state = "KBmissing";
         }
     }
-    //checks for winning game conditions and calls winGame function if all 5 letters are correct
-    if(correctLetters === 5 || (correctLetters !== 5 && localStorage.currentTry === 6)){
+    //checks for winning game conditions
+    if(correctLetters === 5){
         let correctAnswer = x.join("");
         endGame(correctAnswer);
     }
-    //this may or may not be necessary, added it in multiple spots to resolve a bug in that the correct box wasnt being focused whenever a value was updated
-    //document.getElementById(`row${currentTry+1}pos1`).focus();
+    if(correctLetters !== 5 && localStorage.currentTry == 6){
+        endGame();
+    }
+
 }
 
 //this is the function that handles the delegated event listener for mouse clicks on the on screen keyboard
 function addValue(event){
-    if(gameOver){
+    if(localStorage.gameOver === "true"){
         openResults();
         return;
     }
@@ -248,7 +249,6 @@ function deleteTab(){
     //         } 
     //     }    
     // } 
-    console.log(timer.counter);
     if(currentBox === document.getElementById(`row${localStorage.currentTry}pos${timer.counter}`) && timer.counter > 1){
         timer.counter--;
         console.log(timer.counter);
@@ -308,7 +308,7 @@ function autotab(){
 //refactor to maybe have a single function that controls end of game with nested if statement to handle the messages and booleans
 //then also add in a change to innerHTML for the message displayed - perhaps in its own function that has a template for the results
 function endGame(correctAnswer){
-    gameOver = true;
+    localStorage.gameOver = true;
     Summary();
     openResults(correctAnswer);
 }
