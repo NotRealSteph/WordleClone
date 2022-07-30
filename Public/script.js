@@ -4,8 +4,7 @@ let gameOver = false;
 
 const starterBox = document.getElementById(`row${currentTry}pos1`);
 //double check to see if this is necessary to assign this.
-let currentBox = starterBox;
-
+let currentBox;
 
 //need to refactor to include currentTry and gameOver and the answqers and focus boxes into local storage
 window.addEventListener("load", newSession);
@@ -19,7 +18,7 @@ function newSession(){
     }
     if(localStorage.PreviousSessionDate == sessionDate && !gameOver){
         console.log("the date is now: " + localStorage.PreviousSessionDate);
-        currentBox.focus();
+        document.getElementById(localStorage.PreviousSessionBox).focus();
         return false;
     }
     else if(localStorage.PreviousSessionDate !== sessionDate){
@@ -27,6 +26,7 @@ function newSession(){
     getWord();
     //have to refactor isntances to use the currentBox as the previousSessionBox which saves the box ID, not the actual box object.
     localStorage.PreviousSessionBox = starterBox.id;
+    //for debugging.
     console.log(`the id: ${localStorage.PreviousSessionBox}`);
     starterBox.focus();
     return true;
@@ -37,6 +37,7 @@ function getWord(){
     fetch('/answers')
         .then(response => response.json())
         .then(json => {
+            //just for debugging. delete when finished
             console.log(json);
         })
 }
@@ -147,7 +148,10 @@ function checkAnswer(){
         //updates relevant data attributes in the HTML for correct/wrong answers
         updateBoxes(data);
         currentTry = data.attempt;
+        //cant use autotab for now because it doesnt have an if statement to handle enter to new line
+        //autotab();
         document.getElementById(`row${currentTry}pos1`).focus();
+        localStorage.PreviousSessionBox = `row${currentTry}pos1`;
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -225,6 +229,7 @@ function deleteTab(){
     currentBox.dataset.filled = 'false';
     //if its the first box, do not change input box target
     if(currentBox === document.getElementById(`row${currentTry}pos1`)){
+        localStorage.PreviousSessionBox = currentBox.id;
         return;
     }
     //tabbing backwards when deleting values - if the try catch block isnt there it fails for some reason
@@ -233,6 +238,7 @@ function deleteTab(){
             try{
                 currentBox = document.getElementById(`row${currentTry}pos${i-1}`);
                 currentBox.focus();
+                localStorage.PreviousSessionBox = currentBox.id;
                 break;
             }
             catch (error){
@@ -247,6 +253,7 @@ function autotab(){
     currentBox = document.activeElement;
     //do nothing if you are on the last input box of a row
     if(currentBox === document.getElementById(`row${currentTry}pos5`)){
+        localStorage.PreviousSessionBox = currentBox.id;
         return;
     }
     //if the try catch block isnt there it seems to fail just like delete tab
@@ -255,6 +262,7 @@ function autotab(){
             try{
                 currentBox = document.getElementById(`row${currentTry}pos${i+1}`);
                 currentBox.focus();
+                localStorage.PreviousSessionBox = currentBox.id;
                 break;
             }
             catch (error){
