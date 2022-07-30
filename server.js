@@ -123,7 +123,7 @@ app.post('/answers', (req, res) =>{
     //check if the user answer is an actual word, if so, proceed with the letter checking
     if(validateAnswer(answerOptions)){
         compareAnswers(answerOptions);
-        let finalResult = {attempt:answerOptions.attempt+1,
+        let finalResult = {attempt:Number(answerOptions.attempt)+1,
                             answer:checkedLetters,
                             isItThere:checkedPositions,
                         };

@@ -1,12 +1,11 @@
-//attempt variable corresponds to the row the user can input values into
-let currentTry = 1;
 let gameOver = false;
-
-const starterBox = document.getElementById(`row${currentTry}pos1`);
-//double check to see if this is necessary to assign this.
+const starterBox = document.getElementById(`row1pos1`);
 let currentBox;
 
-//need to refactor to include currentTry and gameOver and the answqers and focus boxes into local storage
+//on window reload timer resets to 1 even in the middle of a previous game.
+//perhaps save the timer counter into local storage and add an if statement into the timer function to resume counter if it already exists in localstorage
+//need to save gameOver state into local storage too
+
 window.addEventListener("load", newSession);
 
 function newSession(){
@@ -23,8 +22,8 @@ function newSession(){
     }
     else if(localStorage.PreviousSessionDate !== sessionDate){
     localStorage.PreviousSessionDate = sessionDate;
+    localStorage.currentTry = 1;
     getWord();
-    //have to refactor isntances to use the currentBox as the previousSessionBox which saves the box ID, not the actual box object.
     localStorage.PreviousSessionBox = starterBox.id;
     //for debugging.
     console.log(`the id: ${localStorage.PreviousSessionBox}`);
@@ -84,7 +83,7 @@ document.addEventListener('keydown', function updateValue(event) {
     }
     //detects if enter is pressed and only submits if its the last input box of the row and a value has been submitted
     if(event.key === "Enter"){
-        if(currentBox === document.getElementById(`row${currentTry}pos5`) && currentBox.dataset.filled == "true"){
+        if(currentBox === document.getElementById(`row${localStorage.currentTry}pos5`) && currentBox.dataset.filled == "true"){
         //validateAnswer();
         checkAnswer();
         }
@@ -97,11 +96,11 @@ document.addEventListener('keydown', function updateValue(event) {
 //stores the answer of the current Row and saves it into an array to send to server
 function getAnswer(){
     let answer = [
-        document.getElementById(`row${currentTry}pos1`).innerHTML,
-        document.getElementById(`row${currentTry}pos2`).innerHTML,
-        document.getElementById(`row${currentTry}pos3`).innerHTML,
-        document.getElementById(`row${currentTry}pos4`).innerHTML,
-        document.getElementById(`row${currentTry}pos5`).innerHTML,
+        document.getElementById(`row${localStorage.currentTry}pos1`).innerHTML,
+        document.getElementById(`row${localStorage.currentTry}pos2`).innerHTML,
+        document.getElementById(`row${localStorage.currentTry}pos3`).innerHTML,
+        document.getElementById(`row${localStorage.currentTry}pos4`).innerHTML,
+        document.getElementById(`row${localStorage.currentTry}pos5`).innerHTML,
         ]
     return answer;
 }
@@ -132,7 +131,7 @@ function checkAnswer(){
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                attempt:currentTry,
+                attempt:localStorage.currentTry,
                 answer:getAnswer()
             }),
         };      
@@ -142,16 +141,18 @@ function checkAnswer(){
       .then(data => {
         if(data.answer === "invalid"){
             alert("The word you entered isn't a valid word");
-            document.getElementById(`row${currentTry}pos5`).focus();
+            document.getElementById(`row${localStorage.currentTry}pos5`).focus();
             return;
         }
         //updates relevant data attributes in the HTML for correct/wrong answers
         updateBoxes(data);
-        currentTry = data.attempt;
+        console.log(data.attempt);
+        localStorage.currentTry = data.attempt;
         //cant use autotab for now because it doesnt have an if statement to handle enter to new line
         //autotab();
-        document.getElementById(`row${currentTry}pos1`).focus();
-        localStorage.PreviousSessionBox = `row${currentTry}pos1`;
+        document.getElementById(`row${localStorage.currentTry}pos1`).focus();
+        localStorage.PreviousSessionBox = `row${localStorage.currentTry}pos1`;
+        timer.counter = 1;
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -167,24 +168,24 @@ function updateBoxes(json){
     for (let i = 0; i < json.answer.length; i++) {
         if(json.answer[i] == true){
             //if correct - make boxes and keyboard letter green and increment correctLetters counter for won game status
-            document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "correct";
-            document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBcorrect";
+            document.getElementById(`row${localStorage.currentTry}pos${i+1}`).dataset.state = "correct";
+            document.getElementById(document.getElementById(`row${localStorage.currentTry}pos${i+1}`).innerHTML).dataset.state = "KBcorrect";
             correctLetters++;
-            x.push(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML);
+            x.push(document.getElementById(`row${localStorage.currentTry}pos${i+1}`).innerHTML);
         }
         //sets boxes and keyboard letters to be yellow
         else if (json.isItThere[i] == "exists"){
-            document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "exists";
-            document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBexists";
+            document.getElementById(`row${localStorage.currentTry}pos${i+1}`).dataset.state = "exists";
+            document.getElementById(document.getElementById(`row${localStorage.currentTry}pos${i+1}`).innerHTML).dataset.state = "KBexists";
         }
         //sets boxes and keyboard letters to be black
         else {
-            document.getElementById(`row${currentTry}pos${i+1}`).dataset.state = "missing";
-            document.getElementById(document.getElementById(`row${currentTry}pos${i+1}`).innerHTML).dataset.state = "KBmissing";
+            document.getElementById(`row${localStorage.currentTry}pos${i+1}`).dataset.state = "missing";
+            document.getElementById(document.getElementById(`row${localStorage.currentTry}pos${i+1}`).innerHTML).dataset.state = "KBmissing";
         }
     }
     //checks for winning game conditions and calls winGame function if all 5 letters are correct
-    if(correctLetters === 5 || (correctLetters !== 5 && currentTry === 6)){
+    if(correctLetters === 5 || (correctLetters !== 5 && localStorage.currentTry === 6)){
         let correctAnswer = x.join("");
         endGame(correctAnswer);
     }
@@ -210,7 +211,7 @@ function addValue(event){
     }
     //when enter is pressed, it checks if all 5 letters are filled before checking if the answer is right
     if(ele.classList.contains("enter")){
-        if(currentBox === document.getElementById(`row${currentTry}pos5`) && currentBox.dataset.filled == "true"){
+        if(currentBox === document.getElementById(`row${localStorage.currentTry}pos5`) && currentBox.dataset.filled == "true"){
         //validateAnswer();
         checkAnswer();
         }
@@ -228,48 +229,80 @@ function deleteTab(){
     currentBox.innerHTML ="";
     currentBox.dataset.filled = 'false';
     //if its the first box, do not change input box target
-    if(currentBox === document.getElementById(`row${currentTry}pos1`)){
+    if(currentBox === document.getElementById(`row${localStorage.currentTry}pos1`)){
+        timer.counter = 1;
         localStorage.PreviousSessionBox = currentBox.id;
         return;
     }
     //tabbing backwards when deleting values - if the try catch block isnt there it fails for some reason
-    for (let i = 1; i < 6; i++) {
-        if(currentBox === document.getElementById(`row${currentTry}pos${i}`)){
-            try{
-                currentBox = document.getElementById(`row${currentTry}pos${i-1}`);
-                currentBox.focus();
-                localStorage.PreviousSessionBox = currentBox.id;
-                break;
-            }
-            catch (error){
-                console.log(error)
-            } 
-        }    
-    } 
+    // for (let i = 1; i < 6; i++) {
+    //     if(currentBox === document.getElementById(`row${currentTry}pos${i}`)){
+    //         try{
+    //             currentBox = document.getElementById(`row${currentTry}pos${i-1}`);
+    //             currentBox.focus();
+    //             localStorage.PreviousSessionBox = currentBox.id;
+    //             break;
+    //         }
+    //         catch (error){
+    //             console.log(error)
+    //         } 
+    //     }    
+    // } 
+    console.log(timer.counter);
+    if(currentBox === document.getElementById(`row${localStorage.currentTry}pos${timer.counter}`) && timer.counter > 1){
+        timer.counter--;
+        console.log(timer.counter);
+        currentBox = document.getElementById(`row${localStorage.currentTry}pos${timer.counter}`);
+        currentBox.focus();
+        localStorage.PreviousSessionBox = currentBox.id;
+    }
+    
+    localStorage.PreviousSessionBox = currentBox.id;
+}
+
+function timer(){
+    if( typeof timer.counter == 'undefined' ) {
+        timer.counter = 1;
+        return;
+    }
+    if( timer.counter === 5){
+        return;
+    }
 }
 
 //logic for moving to next input field.
 function autotab(){
     currentBox = document.activeElement;
     //do nothing if you are on the last input box of a row
-    if(currentBox === document.getElementById(`row${currentTry}pos5`)){
-        localStorage.PreviousSessionBox = currentBox.id;
-        return;
-    }
+    // if(currentBox === document.getElementById(`row${currentTry}pos5`)){
+    //     localStorage.PreviousSessionBox = currentBox.id;
+    //     return;
+    // }
     //if the try catch block isnt there it seems to fail just like delete tab
-    for (let i = 1; i < 5; i++) {
-        if(currentBox === document.getElementById(`row${currentTry}pos${i}`) && currentBox !== document.getElementById(`row${currentTry}pos5`)){
-            try{
-                currentBox = document.getElementById(`row${currentTry}pos${i+1}`);
-                currentBox.focus();
-                localStorage.PreviousSessionBox = currentBox.id;
-                break;
-            }
-            catch (error){
-                console.log(error)
-            } 
-        }    
-    } 
+    // for (let i = 1; i < 5; i++) {
+    //     if(currentBox === document.getElementById(`row${currentTry}pos${i}`) && currentBox !== document.getElementById(`row${currentTry}pos5`)){
+    //         try{
+    //             currentBox = document.getElementById(`row${currentTry}pos${i+1}`);
+    //             currentBox.focus();
+    //             localStorage.PreviousSessionBox = currentBox.id;
+    //             break;
+    //         }
+    //         catch (error){
+    //             console.log(error)
+    //         } 
+    //     }    
+    // }
+    
+    timer();
+    console.log(timer.counter);
+    if(currentBox === document.getElementById(`row${localStorage.currentTry}pos${timer.counter}`) && timer.counter < 5){
+        timer.counter++
+        currentBox = document.getElementById(`row${localStorage.currentTry}pos${timer.counter}`);
+        currentBox.focus();
+        localStorage.PreviousSessionBox = currentBox.id;
+    }
+    
+    localStorage.PreviousSessionBox = currentBox.id;
 }
 
 //refactor to maybe have a single function that controls end of game with nested if statement to handle the messages and booleans
