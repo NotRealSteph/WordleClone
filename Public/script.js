@@ -1,20 +1,37 @@
 //attempt variable corresponds to the row the user can input values into
 let currentTry = 1;
 let gameOver = false;
-let gameWon = false;
-let gameLost = false;
 
 const starterBox = document.getElementById(`row${currentTry}pos1`);
 //double check to see if this is necessary to assign this.
 let currentBox = starterBox;
 
-//calls getWord to the server to get a word. This word shouldnt change while window does not close
-window.onload = function() {
-    getWord()
+
+//need to refactor to include currentTry and gameOver and the answqers and focus boxes into local storage
+window.addEventListener("load", newSession);
+
+function newSession(){
+    let sessionDate = new Date().getDay();
+    console.log(sessionDate);
+    if(localStorage.PreviousSessionDate == sessionDate && gameOver){
+        console.log("the date is: " + localStorage.PreviousSessionDate);
+        return false;
+    }
+    if(localStorage.PreviousSessionDate == sessionDate && !gameOver){
+        console.log("the date is now: " + localStorage.PreviousSessionDate);
+        currentBox.focus();
+        return false;
+    }
+    else if(localStorage.PreviousSessionDate !== sessionDate){
+    localStorage.PreviousSessionDate = sessionDate;
+    getWord();
+    //have to refactor isntances to use the currentBox as the previousSessionBox which saves the box ID, not the actual box object.
+    localStorage.PreviousSessionBox = starterBox.id;
+    console.log(`the id: ${localStorage.PreviousSessionBox}`);
+    starterBox.focus();
+    return true;
+    }
 }
-//on page first load it should focus on the first input box
-//need to refactor in later to save everything to sessionStorage so user can navigate away from the page and come back to the same position.
-starterBox.focus();
 
 function getWord(){
     fetch('/answers')
@@ -29,7 +46,7 @@ function getWord(){
 document.addEventListener('mousedown', inputBoxOnly, true);
 
 function inputBoxOnly(e) {
-    if(gameWon||gameLost){
+    if(gameOver){
         openResults();
         return;
     }
@@ -46,7 +63,7 @@ function inputBoxOnly(e) {
 
 //PHYSICAL KEYBOARD EVENT LISTENER
 document.addEventListener('keydown', function updateValue(event) {
-    if(gameWon||gameLost){
+    if(gameOver){
         openResults();
         return;
     }
@@ -163,20 +180,17 @@ function updateBoxes(json){
         }
     }
     //checks for winning game conditions and calls winGame function if all 5 letters are correct
-    if(correctLetters === 5){
+    if(correctLetters === 5 || (correctLetters !== 5 && currentTry === 6)){
         let correctAnswer = x.join("");
-        winGame(correctAnswer);
-    }
-    if(correctLetters !== 5 && currentTry === 6){
-        loseGame();
+        endGame(correctAnswer);
     }
     //this may or may not be necessary, added it in multiple spots to resolve a bug in that the correct box wasnt being focused whenever a value was updated
-    document.getElementById(`row${currentTry+1}pos1`).focus();
+    //document.getElementById(`row${currentTry+1}pos1`).focus();
 }
 
 //this is the function that handles the delegated event listener for mouse clicks on the on screen keyboard
 function addValue(event){
-    if(gameWon||gameLost){
+    if(gameOver){
         openResults();
         return;
     }
@@ -252,18 +266,10 @@ function autotab(){
 
 //refactor to maybe have a single function that controls end of game with nested if statement to handle the messages and booleans
 //then also add in a change to innerHTML for the message displayed - perhaps in its own function that has a template for the results
-function winGame(correctAnswer){
+function endGame(correctAnswer){
     gameOver = true;
-    gameWon = true;
     Summary();
     openResults(correctAnswer);
-}
-
-function loseGame(){
-    gameOver = true;
-    gameLost = true;
-    Summary();
-    openResults();
 }
 
 // Get the modal
